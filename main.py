@@ -13,15 +13,8 @@ async def ping(ctx):
 
 @bot.command()
 async def createteam(ctx):
-    def check(m):
-        if m.author == ctx.author and m.channel == ctx.channel:
-            try:
-                float(m.content)
-                return True
-            except ValueError:
-                return False
-            return False
-    await ctx.send()
+    test1 = ""
+    await ctx.send(ctx.author + " Creating your team")
     
 
 bot.run("MTEzNjAwMzUxMTU0NTQ5OTc3OQ.G1nGkj.tWdI1pGTvjocll0dQtLOgcP2xA_LvcHVAcAklA")
