@@ -18,7 +18,7 @@ async def createteam(ctx):
             try:
                 float(m.content)
                 return True
-            except ValueError
+            except ValueError:
                 return False
             return False
     await ctx.send()
