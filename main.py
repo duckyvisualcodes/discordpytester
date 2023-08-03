@@ -5,6 +5,7 @@ import gspread
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
+
 @bot.event
 async def on_ready():
     print ("Tournament Admin is online")
