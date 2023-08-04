@@ -9,34 +9,8 @@ bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 async def on_ready():
     print ("Tournament Admin is online")
     await bot.add_cog(CreateTeams(bot))
-
-@bot.command(name="ping", help="Will return pong")
-async def ping(ctx):
-    await ctx.send("Pong")
-
-@bot.command(name="createTeam", help="Sends a message saying your team is created")
-async def createteam(ctx):
-    await ctx.send(ctx.author.name + " Your team is being created")
-
-@bot.command(name="typingtest", help="A test for the typing functionality")
-async def typingtest(ctx):
-    await ctx.channel.send("Starting big computation")
-    async with ctx.channel.typing():
-        # simulate something heavy
-        await asyncio.sleep(20)
-    await ctx.channel.send('Done!')
-    
-@bot.command(name="argstest", help="A test for inputting specific defined amount of arguments")
-async def argstest(ctx, arg1, arg2):
-    await ctx.send(f'you send {arg1} and {arg2}')
-    
-@bot.command(name="POG", help="Milo wanted a support for when he does something POG ;)",)
-async def POG(ctx):
-    await ctx.send('well done!')
-
-@bot.command()
-async def testArgumentDescriptions(ctx, arg1 ):
-    return
+    await bot.add_cog(CreateMatchday(bot))
+    await bot.add_cog(MassMessage(bot))
 
 async def createTeamsAndCategory(ctx, *args, categoryName):
         arguments = ', '.join(args)
@@ -51,27 +25,60 @@ async def createTeamsAndCategory(ctx, *args, categoryName):
                 await guild.create_text_channel(x, category=category)
         await ctx.send(f'{len(args)} Teams: {arguments}')   
 
+class MassMessage(commands.Cog, name= "Mass message commands"):
+    def __init__(self, bot):
+        self.bot = bot
+        self._last_member = None      
 
-class CreateTeams(commands.Cog, name= "Create teams commands"):
+    @commands.command(name="MassMessageChannelsInChosenCategory", help="Sends a chosen message in all channels in named category" )
+    async def MassMessageChannelsInChosenCategory(ctx, *teams ):
+        #TODO implement
+        raise NotImplementedError
+
+    @commands.command(name="MassMessageAllChannels", help="Sends a chosen message in all channels")
+    async def MassMessageAllChannels(ctx, categoryName, *teams):
+        #TODO implement
+        raise NotImplementedError  
+    
+    @commands.command(name="MasMessageChosenChannels", help="Sends a chosen message in all chosen channel names")
+    async def MasMessageChosenChannels(ctx, categoryName, *teams):
+        #TODO implement
+        raise NotImplementedError  
+
+
+class CreateTeams(commands.Cog, name= "Team Role & Channel Setup commands"):
     def __init__(self, bot):
         self.bot = bot
         self._last_member = None
-    
-    @commands.Cog.listener()
-    async def on_member_join(self, member):
-        channel = member.guild.system_channel
-        if channel is not None:
-            await channel.send(f'Welcome {member.mention}.') 
 
     @commands.command(name="setupTeamsWithoutCategory", help="Sets up team text channels under default category \'TEAMS\'" )
     async def setupTeamsWithoutCategory(ctx, *teams ):
         await createTeamsAndCategory(ctx, *teams, categoryName='teams')
+        #TODO Finish implementation
+        raise NotImplementedError
 
-    @commands.command(name="setupTeamsWithCategory", help="Sets up team text channels with first argument being the category under which the text channels go under")
+    @commands.command(name="setupTeamsWithCategory", help="Sets up team text channels with first argument being the category under which the channels go under")
     async def setupTeamsWithCategory(ctx, categoryName, *teams):
-        await createTeamsAndCategory(ctx, *teams, categoryName=categoryName)
+        await createTeamsAndCategory(ctx, *teams, categoryName=categoryName)   
+        #TODO Finish implementation
+        raise NotImplementedError 
 
-    
+
+class CreateMatchday(commands.Cog, name= "Matchday Channel Creation commands"):
+    def __init__(self, bot):
+        self.bot = bot
+        self._last_member = None
+
+    @commands.command(name="setupMatchdayChannelsWithoutCategory", help="Sets up match day channels under default category \'MATCHES\'" )
+    async def setupMatchdayChannelsWithoutCategory(ctx, *teams ):
+        #TODO implement
+        raise NotImplementedError
+
+    @commands.command(name="setupMatchdayChannelsWithCategory", help="Sets up tmatch day channels with first argument being the category under which the channels go under")
+    async def setupMatchdayChannelsWithCategory(ctx, categoryName, *teams):
+        #TODO implement
+        raise NotImplementedError
+
 
 class SupremeHelpCommand(commands.HelpCommand):
     def get_command_signature(self, command):
