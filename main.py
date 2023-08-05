@@ -15,19 +15,19 @@ async def on_ready():
     print(f"Synced {len(synced)} command(s).")
     print ("Tournament Admin is online")
 
-async def createTeamsAndCategory(interaction: discord.Interaction, categoryName, args: str):
+async def createTeamsAndCategory(interaction: discord.Interaction, categoryName: str, args: str):
         teams = list(args.split(","))
         arguments = ""
         guild = interaction.guild
-        category = discord.utils.get(guild.categories, name=categoryName)
+        category = discord.utils.get(guild.categories, name=categoryName.lower())
         if not category:
-            await guild.create_category(categoryName)
-            category = discord.utils.get(guild.categories, name=categoryName)
+            await guild.create_category(categoryName.lower())
+            category = discord.utils.get(guild.categories, name=categoryName.lower())
         for x in teams:
             x=x.strip().replace(" ", "-")
-            channel = discord.utils.get(guild.text_channels, name=x, category=category)
+            channel = discord.utils.get(guild.text_channels, name=x.lower(), category=category)
             if not channel:
-                await guild.create_text_channel(x, category=category)
+                await guild.create_text_channel(x.lower(), category=category)
                 arguments += x + ', '
         if len(arguments)>0:
             arguments = arguments.rstrip(', ') 
