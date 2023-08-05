@@ -17,7 +17,10 @@ async def on_ready():
 
 async def createTeamsAndCategory(interaction: discord.Interaction, categoryName: str, args: str):
         teams = list(args.split(","))
-        arguments = ""
+        createdTeamsChannels = ""
+        notCreatedTeamsChannels = ""
+        createdRoles = ""
+        notCreatedRoles = ""
         guild = interaction.guild
         category = discord.utils.get(guild.categories, name=categoryName.lower())
         if not category:
@@ -28,12 +31,34 @@ async def createTeamsAndCategory(interaction: discord.Interaction, categoryName:
             channel = discord.utils.get(guild.text_channels, name=x.lower(), category=category)
             if not channel:
                 await guild.create_text_channel(x.lower(), category=category)
-                arguments += x + ', '
-        if len(arguments)>0:
-            arguments = arguments.rstrip(', ') 
-            await interaction.response.send_message(f'{len(arguments.split(","))} team channels created: {arguments} in categeory {categoryName}')   
-        else:
-            await interaction.response.send_message(f'No new team channels created team channels already exists for: {args} in category {categoryName}')
+                channel = discord.utils.get(guild.text_channels, name=x.lower(), category=category)
+                createdTeamsChannels += x + ', '
+            else:
+                notCreatedTeamsChannels += x + ', '
+            await channel.set_permissions(guild.default_role, view_channel=False)
+            role = discord.utils.get(guild.roles, name=x.lower())
+            if not role:
+                await guild.create_role(name=x.lower())
+                role = discord.utils.get(guild.roles, name=x.lower())
+                createdRoles += x + ', '
+            else:
+                notCreatedRoles += x + ', '
+            await channel.set_permissions(role, view_channel=True)
+        response = ""
+        if len(createdTeamsChannels)>0:
+            createdTeamsChannels = createdTeamsChannels.rstrip(', ') 
+            response += f'{len(createdTeamsChannels.split(","))} team channels created: {createdTeamsChannels} in categeory {categoryName}\n'
+        if len(notCreatedTeamsChannels)>0:
+            notCreatedTeamsChannels = notCreatedTeamsChannels.rstrip(', ')
+            response += f'Team channels already exists for: {notCreatedTeamsChannels} in category {categoryName}\n'
+
+        if len(createdRoles)>0:
+           createdRoles = createdRoles.rstrip(', ')
+           response += f'{len(createdRoles.split(","))} team roles created: {createdRoles}\n'
+        if len(notCreatedRoles)>0:
+            notCreatedRoles = notCreatedRoles.rstrip(', ')
+            response += f'Team roles already exists for: {notCreatedRoles}\n'
+        await interaction.response.send_message(response)
 
 @bot.tree.command(name="hello")
 async def hello(interaction: discord.Interaction):
