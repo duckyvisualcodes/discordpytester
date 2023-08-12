@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 from discord import CategoryChannel
 import asyncio
+from GspreadSetup import gc
 import gspread
 
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
@@ -148,6 +149,24 @@ class CreateMatchday(commands.Cog, name= "Matchday Channel Creation commands"):
     async def setupMatchdayChannelsWithCategory(ctx, categoryName, *teams):
         #TODO implement
         raise NotImplementedError
+    
+    @app_commands.command(name="test-gspread-command")
+    @app_commands.describe(sheetlink = "The link to the sheet of information about matches, make sure it follows the given template")
+    async def testgspreadcommand(self, interaction: discord.Interaction, sheetlink: str):
+        try:
+            sh = gc.open_by_url(sheetlink)
+        except gspread.exceptions.APIError as a:
+            first_value = next(iter(a.args[0].values()))
+            response = ""
+            if(first_value==404):
+                response = "The sheet provided can not be found, make sure you have given a correct link"
+            elif(first_value==403):
+                response = "The sheet provided can not be accessed by bot, make sure you have set share settings, General access to anyone with link can edit"
+            else:
+                response = f"The error {a} is not currently handled contact bot owners about this issue"
+            await interaction.response.send_message(response)
+            return
+        await interaction.response.send_message(sh.sheet1.acell('A1').value)
 
 bot.run("MTEzNjAwMzUxMTU0NTQ5OTc3OQ.G1nGkj.tWdI1pGTvjocll0dQtLOgcP2xA_LvcHVAcAklA")
 
